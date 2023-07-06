@@ -3,21 +3,31 @@ import React, { useState } from 'react';
 
 
 function AvatarPlayer(props){
-    const [inputName, setinputName] = useState(`${props.name} ${props.lastName}`);
+    const [inputName, setinputName] = useState(`${props.name}`);
     const [inputScore, setinputScore] = useState(`${props.score}`);
     const [inputGender, setinputGender] = useState(`${props.gender}`);
 
-
-    const positionWord = inputName.split(" ")
+    
+    const positionWordwithSpaces = inputName.split(" ")
+    const positionWord = positionWordwithSpaces.filter((word)=>word!=="")
+    if(positionWord[0]!==undefined&&positionWord[1]===undefined){
+        positionWord[1]=positionWord[0][1]
+    }
 
     const handleChange = (event) => {
         const {name, value} = event.target
         props.onChange(props.id,name,value);
         if(name==="name"){
-            setinputName(value)
+            if(name!==undefined){
+                setinputName(value)
+            }
+            else{
+                setinputName("Anonimus")
+            }
         }
         else if (name==="score"){
-            setinputScore(value);
+            let score = parseFloat(value)
+            setinputScore(score);
         }
         else if (name==="gender"){
             setinputGender(value)
@@ -28,6 +38,7 @@ function AvatarPlayer(props){
 
 
     const bgColor = "random"
+    
     const urlImg = `https://ui-avatars.com/api/?name=${positionWord[0]}+${positionWord[1]}&background=${bgColor}&color=fff&size=200`
 
     return <div className="avatar-player">
@@ -36,7 +47,7 @@ function AvatarPlayer(props){
                     <input type='text' name='name' value={inputName} onChange={handleChange} className="player-name"></input>
                     <div className='section-player-score line-info'>
                         <p>Score: </p>
-                        <input type="number" min="0" max="5" step="0.01" name='score' value={inputScore} onChange={handleChange} className="player-score player-props" />
+                        <input type="number" min="0" max="5" step="0.1" name='score' value={inputScore} onChange={handleChange} className="player-score player-props" />
                     </div>
                     <div className='section-player-gender line-info'>
                         <p>Gender: </p>

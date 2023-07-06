@@ -5,6 +5,7 @@ import viteLogo from '/vite.svg'
 
 //Modulos
 import { randomMakerTeam } from './components/randomMaker'
+import { map } from './components/averageMaker'
 
 
 import AvatarPlayer from './components/avatar-player'
@@ -13,16 +14,17 @@ import dataPlayerDefault from "./data/dataPlayerDefault.json"
 
 function App() {
   const [playersList,setPlayersList] = useState([...dataPlayerDefault])
+  console.log(playersList)
 
-
-
+  
   const [amountPlayers, setAmountPlayer] = useState(5)
   const [Players,setPlayers] = useState(playersList.slice(0,amountPlayers*2))
   const [FieldPlayer,setFieldPlayer] =useState(Players.slice(1,-1))
   const [Goalkeepers,setGoalkeepers] = useState([Players[0],Players[Players.length-1]])
   const [FieldPlayerTeam1,setFieldPlayerTeam1] = useState(FieldPlayer.slice(0,amountPlayers-1))
   const [FieldPlayerTeam2,setFieldPlayerTeam2] = useState(FieldPlayer.slice(amountPlayers-1,FieldPlayer.length))
-
+  
+  console.log(map(Players,amountPlayers))
   
 
 
@@ -58,12 +60,39 @@ function App() {
     setFieldPlayerTeam1(newFieldPlayerTeam1);
     setFieldPlayerTeam2(newFieldPlayerTeam2);
   }
+  const handleMakeAverage = () =>{
+
+    const newPlayers = [...map(Players,amountPlayers)];
+    const newFieldPlayer = newPlayers.slice(1, -1);
+    const newGoalkeepers = [newPlayers[0], newPlayers[newPlayers.length - 1]];
+    const newFieldPlayerTeam1 = newFieldPlayer.slice(0, amountPlayers - 1);
+    const newFieldPlayerTeam2 = newFieldPlayer.slice(amountPlayers - 1, newFieldPlayer.length);
+
+    setPlayers(newPlayers);
+    setFieldPlayer(newFieldPlayer);
+    setGoalkeepers(newGoalkeepers);
+    setFieldPlayerTeam1(newFieldPlayerTeam1);
+    setFieldPlayerTeam2(newFieldPlayerTeam2);
+  }
 
 
   const handleChangeAvatar = (id,name,value) =>{
     playersList.forEach((item) => {
+      console.log(name)
       if (item.id === id) {
-        item[name] = value;
+        if(name=="score"){
+          let score = parseFloat(value)
+          if(score>5){
+            score=5
+          }
+          else if(score<0){
+            score=0.01
+          }
+          item[name] = score
+        }
+        else{
+          item[name] = value;
+        }
         console.log(item)
       }
     });
@@ -80,7 +109,7 @@ function App() {
                 <AmountPlayerSelect amountPlayers={amountPlayers} onChangeFunction={handleChangeAmountPlayers}/>
             </li>
             <li className='navbar-item'><button onClick={handleMakeRandom}>Aleatorio</button></li>
-            <li className='navbar-item'>Criterio de formacion</li>
+            <li className='navbar-item'><button onClick={handleMakeAverage}>Criterio de formacion</button></li>
           </ul>
         </div>
       </header>
